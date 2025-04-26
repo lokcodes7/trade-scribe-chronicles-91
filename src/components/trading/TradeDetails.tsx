@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTrade } from '@/contexts/TradeContext';
 import { useToast } from '@/hooks/use-toast';
+import { Check, Save } from 'lucide-react';
 
 interface TradeDetailsProps {
   trade: Trade | null;
@@ -22,9 +23,10 @@ interface TradeDetailsProps {
 }
 
 const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => {
-  const { deleteTrade } = useTrade();
+  const { deleteTrade, updateTrade } = useTrade();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   if (!trade) return null;
 
@@ -54,6 +56,30 @@ const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => 
       });
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleSave = () => {
+    if (!trade) return;
+    
+    setIsSaving(true);
+    try {
+      const success = updateTrade(trade.id, trade);
+      if (success === true) {
+        toast({
+          title: "Success",
+          description: "Trade saved successfully",
+        });
+      }
+    } catch (error) {
+      console.error("Error saving trade:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save trade",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -148,13 +174,29 @@ const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => 
           </div>
         )}
 
-        <DialogFooter className="mt-6">
+        <DialogFooter className="mt-6 flex justify-between">
           <Button 
             variant="destructive" 
             onClick={handleDelete}
             disabled={isDeleting}
           >
             {isDeleting ? "Deleting..." : "Delete Trade"}
+          </Button>
+
+          <Button
+            variant="default"
+            onClick={handleSave}
+            disabled={isSaving}
+            className="gap-2"
+          >
+            {isSaving ? (
+              "Saving..."
+            ) : (
+              <>
+                <Save size={16} />
+                Save Trade
+              </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
