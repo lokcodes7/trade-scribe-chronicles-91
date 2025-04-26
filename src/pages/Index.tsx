@@ -1,13 +1,33 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 
-const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+import React from 'react';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { TradeProvider } from '@/contexts/TradeContext';
+import Home from './Home';
+import Dashboard from './Dashboard';
+
+const AuthenticatedApp: React.FC = () => {
+  const { user, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-xl text-muted-foreground">Loading...</p>
+        </div>
       </div>
-    </div>
+    );
+  }
+  
+  return user ? <Dashboard /> : <Home />;
+};
+
+const Index: React.FC = () => {
+  return (
+    <AuthProvider>
+      <TradeProvider>
+        <AuthenticatedApp />
+      </TradeProvider>
+    </AuthProvider>
   );
 };
 
