@@ -27,8 +27,16 @@ const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => 
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [editedTrade, setEditedTrade] = useState<Trade | null>(null);
 
-  if (!trade) return null;
+  // Initialize editedTrade when trade changes
+  React.useEffect(() => {
+    if (trade) {
+      setEditedTrade({...trade});
+    }
+  }, [trade]);
+
+  if (!trade || !editedTrade) return null;
 
   const slAmount = calculateSLAmount(trade.quantity, trade.entryPrice, trade.slPrice);
   const rewardAmount = calculateRewardAmount(trade.quantity, trade.entryPrice, trade.targetPrice);
@@ -60,11 +68,11 @@ const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => 
   };
 
   const handleSave = () => {
-    if (!trade) return;
+    if (!editedTrade) return;
     
     setIsSaving(true);
     try {
-      const success = updateTrade(trade.id, trade);
+      const success = updateTrade(editedTrade.id, editedTrade);
       if (success === true) {
         toast({
           title: "Success",
