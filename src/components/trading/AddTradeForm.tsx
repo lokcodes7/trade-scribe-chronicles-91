@@ -40,7 +40,7 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
   const { addTrade } = useTrade();
   const { toast } = useToast();
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!stockName || !quantity || !entryPrice || !slPrice || !targetPrice || !strategy) {
@@ -70,13 +70,14 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
     };
     
     try {
-      addTrade(newTrade);
-      toast({
-        title: "Success",
-        description: "Trade added successfully",
-      });
-      onClose();
+      const success = addTrade(newTrade);
+      
+      if (success) {
+        handleReset();
+        onClose();
+      }
     } catch (error) {
+      console.error("Error in trade submission:", error);
       toast({
         title: "Error",
         description: "Failed to add trade",

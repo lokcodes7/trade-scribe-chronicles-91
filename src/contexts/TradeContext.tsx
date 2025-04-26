@@ -1,6 +1,6 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Trade, DailyTradesSummary } from '@/models/trade';
+import { Trade, DailyTradesSummary, formatTradeForStorage, parseTradeFromStorage } from '@/models/trade';
+import { useToast } from '@/hooks/use-toast';
 
 interface TradeContextType {
   trades: Trade[];
@@ -13,7 +13,10 @@ interface TradeContextType {
   getDaysWithTradesForMonth: (year: number, month: number) => number[];
   getMonthsWithTradesForYear: (year: number) => number[];
   getYearsWithTrades: () => number[];
+  saveTrades: () => void;
 }
+
+const STORAGE_KEY = 'tradeJournalTrades';
 
 const TradeContext = createContext<TradeContextType | undefined>(undefined);
 
@@ -28,54 +31,123 @@ export const useTrade = () => {
 export const TradeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Check localStorage for saved trade data
-    const savedTrades = localStorage.getItem('tradeJournalTrades');
-    if (savedTrades) {
-      const parsedTrades: Trade[] = JSON.parse(savedTrades).map((trade: any) => ({
-        ...trade,
-        date: new Date(trade.date),
-        createdAt: new Date(trade.createdAt),
-        updatedAt: new Date(trade.updatedAt)
-      }));
-      setTrades(parsedTrades);
-    }
-    setIsLoading(false);
+    const loadTrades = () => {
+      try {
+        const savedTrades = localStorage.getItem(STORAGE_KEY);
+        if (savedTrades) {
+          const parsedTrades: Trade[] = JSON.parse(savedTrades).map(parseTradeFromStorage);
+          setTrades(parsedTrades);
+        }
+      } catch (error) {
+        console.error("Error loading trades from localStorage:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load your trades",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTrades();
   }, []);
 
   useEffect(() => {
-    // Save trades to localStorage whenever it changes
     if (trades.length > 0) {
-      localStorage.setItem('tradeJournalTrades', JSON.stringify(trades));
+      saveTrades();
     }
   }, [trades]);
 
-  const addTrade = (trade: Omit<Trade, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
-    const now = new Date();
-    const newTrade: Trade = {
-      ...trade,
-      id: `trade-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      userId: 'user-123', // Replace with actual user ID
-      createdAt: now,
-      updatedAt: now
-    };
+  const saveTrades = () => {
+    try {
+      const formattedTrades = trades.map(formatTradeForStorage);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(formattedTrades));
+      return true;
+    } catch (error) {
+      console.error("Error saving trades to localStorage:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save your trades",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
 
-    setTrades(prevTrades => [...prevTrades, newTrade]);
+  const addTrade = (trade: Omit<Trade, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      const now = new Date();
+      const newTrade: Trade = {
+        ...trade,
+        id: `trade-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        userId: 'user-123', // Replace with actual user ID when authentication is implemented
+        createdAt: now,
+        updatedAt: now
+      };
+
+      setTrades(prevTrades => [...prevTrades, newTrade]);
+      toast({
+        title: "Success",
+        description: "Trade added successfully",
+      });
+      return true;
+    } catch (error) {
+      console.error("Error adding trade:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add trade",
+        variant: "destructive",
+      });
+      return false;
+    }
   };
 
   const updateTrade = (id: string, tradeUpdates: Partial<Trade>) => {
-    setTrades(prevTrades => 
-      prevTrades.map(trade => 
-        trade.id === id 
-          ? { ...trade, ...tradeUpdates, updatedAt: new Date() } 
-          : trade
-      )
-    );
+    try {
+      setTrades(prevTrades => 
+        prevTrades.map(trade => 
+          trade.id === id 
+            ? { ...trade, ...tradeUpdates, updatedAt: new Date() } 
+            : trade
+        )
+      );
+      toast({
+        title: "Success",
+        description: "Trade updated successfully",
+      });
+      return true;
+    } catch (error) {
+      console.error("Error updating trade:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update trade",
+        variant: "destructive",
+      });
+      return false;
+    }
   };
 
   const deleteTrade = (id: string) => {
-    setTrades(prevTrades => prevTrades.filter(trade => trade.id !== id));
+    try {
+      setTrades(prevTrades => prevTrades.filter(trade => trade.id !== id));
+      toast({
+        title: "Success",
+        description: "Trade deleted successfully",
+      });
+      return true;
+    } catch (error) {
+      console.error("Error deleting trade:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete trade",
+        variant: "destructive",
+      });
+      return false;
+    }
   };
 
   const getTradesByDate = (date: Date): Trade[] => {
@@ -148,7 +220,6 @@ export const TradeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
     
     if (yearsWithTrades.size === 0) {
-      // If no trades, add current year
       yearsWithTrades.add(new Date().getFullYear());
     }
     
@@ -166,7 +237,8 @@ export const TradeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       getDailySummary,
       getDaysWithTradesForMonth,
       getMonthsWithTradesForYear,
-      getYearsWithTrades
+      getYearsWithTrades,
+      saveTrades
     }}>
       {children}
     </TradeContext.Provider>

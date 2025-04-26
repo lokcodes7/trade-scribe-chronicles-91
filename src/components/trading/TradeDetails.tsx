@@ -1,15 +1,19 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog';
-import { Trade, calculateSLAmount, calculateRewardAmount, calculateRiskRewardRatio } from '@/models/trade';
+import { Trade, calculateSLAmount, calculateRewardAmount, calculateRiskRewardRatio, calculateRealizedPnL } from '@/models/trade';
 import { formatCurrency } from '@/lib/formatters';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useTrade } from '@/contexts/TradeContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface TradeDetailsProps {
   trade: Trade | null;
@@ -18,6 +22,10 @@ interface TradeDetailsProps {
 }
 
 const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => {
+  const { deleteTrade } = useTrade();
+  const { toast } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
+
   if (!trade) return null;
 
   const slAmount = calculateSLAmount(trade.quantity, trade.entryPrice, trade.slPrice);
@@ -25,8 +33,29 @@ const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => 
   const riskReward = calculateRiskRewardRatio(slAmount, rewardAmount);
   
   const pnl = trade.exitPrice 
-    ? trade.quantity * (trade.exitPrice - trade.entryPrice)
+    ? calculateRealizedPnL(trade.quantity, trade.entryPrice, trade.exitPrice)
     : null;
+
+  const handleDelete = () => {
+    if (!trade) return;
+    
+    setIsDeleting(true);
+    try {
+      const success = deleteTrade(trade.id);
+      if (success) {
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error deleting trade:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete trade",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -96,7 +125,7 @@ const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => 
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">Outcome</p>
             <p className="font-medium">
-              {trade.slHit ? 'SL Hit' : trade.trailedSL ? 'Trailed SL' : 'Target Hit'}
+              {trade.slHit ? 'SL Hit' : trade.trailedSL ? 'Trailed SL' : trade.exitPrice ? 'Target Hit' : 'Trade Open'}
             </p>
           </div>
         </div>
@@ -118,6 +147,16 @@ const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => 
             <p className="text-sm mt-1">{trade.notes}</p>
           </div>
         )}
+
+        <DialogFooter className="mt-6">
+          <Button 
+            variant="destructive" 
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Deleting..." : "Delete Trade"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
