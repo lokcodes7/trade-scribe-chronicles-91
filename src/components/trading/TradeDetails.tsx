@@ -42,7 +42,7 @@ const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => 
     setIsDeleting(true);
     try {
       const success = deleteTrade(trade.id);
-      if (success) {
+      if (success === true) {
         onClose();
       }
     } catch (error) {

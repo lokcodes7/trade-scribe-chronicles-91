@@ -72,7 +72,7 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
     try {
       const success = addTrade(newTrade);
       
-      if (success) {
+      if (success === true) {
         handleReset();
         onClose();
       }

@@ -5,15 +5,15 @@ import { useToast } from '@/hooks/use-toast';
 interface TradeContextType {
   trades: Trade[];
   isLoading: boolean;
-  addTrade: (trade: Omit<Trade, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => void;
-  updateTrade: (id: string, trade: Partial<Trade>) => void;
-  deleteTrade: (id: string) => void;
+  addTrade: (trade: Omit<Trade, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => boolean;
+  updateTrade: (id: string, trade: Partial<Trade>) => boolean;
+  deleteTrade: (id: string) => boolean;
   getTradesByDate: (date: Date) => Trade[];
   getDailySummary: (date: Date) => DailyTradesSummary | null;
   getDaysWithTradesForMonth: (year: number, month: number) => number[];
   getMonthsWithTradesForYear: (year: number) => number[];
   getYearsWithTrades: () => number[];
-  saveTrades: () => void;
+  saveTrades: () => boolean;
 }
 
 const STORAGE_KEY = 'tradeJournalTrades';
@@ -62,7 +62,7 @@ export const TradeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [trades]);
 
-  const saveTrades = () => {
+  const saveTrades = (): boolean => {
     try {
       const formattedTrades = trades.map(formatTradeForStorage);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(formattedTrades));
@@ -78,7 +78,7 @@ export const TradeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const addTrade = (trade: Omit<Trade, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
+  const addTrade = (trade: Omit<Trade, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): boolean => {
     try {
       const now = new Date();
       const newTrade: Trade = {
@@ -106,7 +106,7 @@ export const TradeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const updateTrade = (id: string, tradeUpdates: Partial<Trade>) => {
+  const updateTrade = (id: string, tradeUpdates: Partial<Trade>): boolean => {
     try {
       setTrades(prevTrades => 
         prevTrades.map(trade => 
@@ -131,7 +131,7 @@ export const TradeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const deleteTrade = (id: string) => {
+  const deleteTrade = (id: string): boolean => {
     try {
       setTrades(prevTrades => prevTrades.filter(trade => trade.id !== id));
       toast({
