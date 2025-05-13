@@ -51,15 +51,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
   return (
     <Card className="w-full max-w-md mx-auto bg-orange-50 border-orange-200">
       <CardHeader>
-        <CardTitle className="text-2xl text-center font-playfair">
+        <CardTitle className="text-2xl text-center font-understan">
           <span className="text-red-600">Per</span><span className="text-green-600">fect</span> <span>⚡</span> Login
         </CardTitle>
-        <CardDescription className="text-center font-lora text-gray-700">Enter your credentials to access your account</CardDescription>
+        <CardDescription className="text-center font-understan text-gray-700">Enter your credentials to access your account</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium font-lora text-gray-800">Email</label>
+            <label htmlFor="email" className="text-sm font-medium font-understan text-gray-800">Email</label>
             <Input
               id="email"
               type="email"
@@ -71,7 +71,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium font-lora text-gray-800">Password</label>
+            <label htmlFor="password" className="text-sm font-medium font-understan text-gray-800">Password</label>
             <Input
               id="password"
               type="password"
@@ -82,15 +82,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
               className="bg-white text-gray-800"
             />
           </div>
-          <Button type="submit" className="w-full font-playfair" disabled={isSubmitting}>
+          <Button type="submit" className="w-full font-understan" disabled={isSubmitting}>
             {isSubmitting ? "Logging in..." : "Login"}
           </Button>
         </form>
       </CardContent>
       <CardFooter>
-        <p className="text-sm text-center w-full font-lora text-gray-700">
+        <p className="text-sm text-center w-full font-understan text-gray-700">
           Don't have an account?{" "}
-          <Button variant="link" className="p-0 font-playfair text-primary" onClick={onToggleForm}>
+          <Button variant="link" className="p-0 font-understan text-primary" onClick={onToggleForm}>
             Sign up
           </Button>
         </p>
