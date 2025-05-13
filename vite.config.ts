@@ -3,8 +3,9 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
-// https://vitejs.dev/config/
+// GitHub Pages requires this base path for subfolder hosting
 export default defineConfig(({ mode }) => ({
+  base: '/trade-scribe-chronicles-91/',  // ✅ important for GitHub Pages
   server: {
     host: "::",
     port: 8080,
