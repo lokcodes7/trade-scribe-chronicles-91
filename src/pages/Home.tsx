@@ -20,9 +20,10 @@ const Home: React.FC = () => {
         <div className="container flex h-16 items-center">
           <div className="mr-4 flex">
             <a href="/" className="flex items-center space-x-2">
-              <span className="font-bold text-xl">
+              <span className="font-playfair font-bold text-xl">
                 <span className="text-red-600">Per</span>
                 <span className="text-green-600">fect</span>
+                <span className="ml-1">⚡</span>
               </span>
             </a>
           </div>
@@ -30,17 +31,17 @@ const Home: React.FC = () => {
             <NavigationMenu className="hidden md:flex">
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="px-4 py-2 hover:text-primary text-cream-100">
+                  <NavigationMenuLink className="px-4 py-2 hover:text-primary font-playfair text-gray-800">
                     Features
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="px-4 py-2 hover:text-primary text-cream-100">
+                  <NavigationMenuLink className="px-4 py-2 hover:text-primary font-playfair text-gray-800">
                     Documentation
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink className="px-4 py-2 hover:text-primary text-cream-100">
+                  <NavigationMenuLink className="px-4 py-2 hover:text-primary font-playfair text-gray-800">
                     Pricing
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -48,10 +49,10 @@ const Home: React.FC = () => {
             </NavigationMenu>
           </div>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" onClick={() => setShowLogin(true)}>
+            <Button variant="outline" onClick={() => setShowLogin(true)} className="font-playfair text-gray-800">
               Sign In
             </Button>
-            <Button onClick={() => setShowLogin(false)}>
+            <Button onClick={() => setShowLogin(false)} className="font-playfair">
               Sign Up
             </Button>
           </div>
@@ -62,17 +63,17 @@ const Home: React.FC = () => {
       <section className="flex-1 flex flex-col md:flex-row items-center justify-center px-4 py-10 md:py-0 trader-background">
         <div className="container grid grid-cols-1 md:grid-cols-2 gap-12 items-center z-10">
           <div className="flex flex-col space-y-6">
-            <h1 className="text-4xl md:text-6xl font-bold text-cream-100 drop-shadow-lg animate-fade-in-down">
-              <span className="text-red-600">Per</span><span className="text-green-600">fect</span> Trade Chronicles
+            <h1 className="font-playfair text-4xl md:text-6xl font-bold text-gray-900 drop-shadow-lg animate-fade-in-down">
+              <span className="text-red-600">Per</span><span className="text-green-600">fect</span> <span className="text-gray-900">⚡</span> Trade Chronicles
             </h1>
-            <p className="text-xl text-cream-100/90 drop-shadow-md max-w-md animate-fade-in-down" style={{ animationDelay: "0.1s" }}>
+            <p className="font-lora text-xl text-gray-800 drop-shadow-md max-w-md animate-fade-in-down" style={{ animationDelay: "0.1s" }}>
               "Be in the Market with a plan to beat the Market." Track your trades, analyze your performance, and become a better trader.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-down" style={{ animationDelay: "0.2s" }}>
-              <Button size="lg" onClick={() => setShowLogin(false)}>
+              <Button size="lg" onClick={() => setShowLogin(false)} className="font-playfair">
                 Get Started
               </Button>
-              <Button size="lg" variant="outline" className="bg-orange-100/10 text-cream-100 border-orange-200/20 hover:bg-orange-100/20">
+              <Button size="lg" variant="outline" className="bg-orange-100/50 text-gray-800 border-orange-200 hover:bg-orange-100 font-playfair">
                 Learn More
               </Button>
             </div>
@@ -91,9 +92,10 @@ const Home: React.FC = () => {
       {/* Features Section */}
       <section className="bg-orange-100 py-16">
         <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-12">
+          <h2 className="font-playfair text-3xl font-bold text-center mb-12">
             <span className="text-red-600">Per</span>
-            <span className="text-green-600">fect</span> Features
+            <span className="text-green-600">fect</span>
+            <span className="ml-1">⚡</span> Features
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -112,8 +114,8 @@ const Home: React.FC = () => {
             ].map((feature, i) => (
               <Card key={i} className="hover:shadow-lg transition-all bg-orange-50">
                 <CardContent className="pt-6">
-                  <h3 className="text-xl font-semibold mb-2 text-cream-100">{feature.title}</h3>
-                  <p className="text-cream-100/80">{feature.description}</p>
+                  <h3 className="font-playfair text-xl font-semibold mb-2 text-gray-800">{feature.title}</h3>
+                  <p className="font-lora text-gray-700">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -125,18 +127,18 @@ const Home: React.FC = () => {
       <footer className="bg-orange-50 border-t py-8">
         <div className="container flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <p className="text-sm text-cream-100">
-              © 2025 <span className="text-red-600">Per</span><span className="text-green-600">fect</span>. All rights reserved.
+            <p className="font-lora text-sm text-gray-700">
+              © 2025 <span className="text-red-600 font-playfair">Per</span><span className="text-green-600 font-playfair">fect</span> <span>⚡</span>. All rights reserved.
             </p>
           </div>
           <div className="flex space-x-6">
-            <a href="#" className="text-sm text-cream-100 hover:text-foreground">
+            <a href="#" className="font-lora text-sm text-gray-700 hover:text-gray-900">
               Terms
             </a>
-            <a href="#" className="text-sm text-cream-100 hover:text-foreground">
+            <a href="#" className="font-lora text-sm text-gray-700 hover:text-gray-900">
               Privacy
             </a>
-            <a href="#" className="text-sm text-cream-100 hover:text-foreground">
+            <a href="#" className="font-lora text-sm text-gray-700 hover:text-gray-900">
               Contact
             </a>
           </div>

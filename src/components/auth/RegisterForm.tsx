@@ -60,15 +60,17 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto bg-orange-50 border-orange-200">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Sign Up</CardTitle>
-        <CardDescription className="text-center">Create an account to track your trades</CardDescription>
+        <CardTitle className="text-2xl text-center font-playfair">
+          <span className="text-red-600">Per</span><span className="text-green-600">fect</span> <span>⚡</span> Sign Up
+        </CardTitle>
+        <CardDescription className="text-center font-lora text-gray-700">Create an account to track your trades</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium">Name</label>
+            <label htmlFor="name" className="text-sm font-medium font-lora text-gray-800">Name</label>
             <Input
               id="name"
               type="text"
@@ -76,10 +78,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              className="bg-white text-gray-800"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">Email</label>
+            <label htmlFor="email" className="text-sm font-medium font-lora text-gray-800">Email</label>
             <Input
               id="email"
               type="email"
@@ -87,10 +90,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="bg-white text-gray-800"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium">Password</label>
+            <label htmlFor="password" className="text-sm font-medium font-lora text-gray-800">Password</label>
             <Input
               id="password"
               type="password"
@@ -98,10 +102,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="bg-white text-gray-800"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="text-sm font-medium font-lora text-gray-800">Confirm Password</label>
             <Input
               id="confirmPassword"
               type="password"
@@ -109,17 +114,18 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              className="bg-white text-gray-800"
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="w-full font-playfair" disabled={isSubmitting}>
             {isSubmitting ? "Creating Account..." : "Sign Up"}
           </Button>
         </form>
       </CardContent>
       <CardFooter>
-        <p className="text-sm text-center w-full">
+        <p className="text-sm text-center w-full font-lora text-gray-700">
           Already have an account?{" "}
-          <Button variant="link" className="p-0" onClick={onToggleForm}>
+          <Button variant="link" className="p-0 font-playfair text-primary" onClick={onToggleForm}>
             Login
           </Button>
         </p>
