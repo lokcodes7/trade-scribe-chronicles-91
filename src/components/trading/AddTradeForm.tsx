@@ -240,11 +240,11 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
               <div className="grid grid-cols-3 gap-4 bg-orange-100 p-2 rounded-md">
                 <div>
                   <Label className="text-xs text-cream-100">SL Amount</Label>
-                  <p className="text-sm font-medium text-cream-100">${metrics.slAmount.toFixed(2)}</p>
+                  <p className="text-sm font-medium text-red-600">${metrics.slAmount.toFixed(2)}</p>
                 </div>
                 <div>
                   <Label className="text-xs text-cream-100">Reward Amount</Label>
-                  <p className="text-sm font-medium text-cream-100">${metrics.rewardAmount.toFixed(2)}</p>
+                  <p className="text-sm font-medium text-green-600">${metrics.rewardAmount.toFixed(2)}</p>
                 </div>
                 <div>
                   <Label className="text-xs text-cream-100">Risk:Reward</Label>

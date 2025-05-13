@@ -131,12 +131,12 @@ const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => 
           
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">SL Amount</p>
-            <p className="font-medium">{formatCurrency(slAmount)}</p>
+            <p className="font-medium text-red-600">{formatCurrency(slAmount)}</p>
           </div>
           
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">Reward Amount</p>
-            <p className="font-medium">{formatCurrency(rewardAmount)}</p>
+            <p className="font-medium text-green-600">{formatCurrency(rewardAmount)}</p>
           </div>
           
           <div className="space-y-1">
@@ -151,7 +151,7 @@ const TradeDetails: React.FC<TradeDetailsProps> = ({ trade, open, onClose }) => 
           
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">Exit Price</p>
-            <p className="font-medium">
+            <p className={`font-medium ${trade.exitPrice ? (trade.exitPrice > trade.entryPrice ? 'text-green-600' : 'text-red-600') : ''}`}>
               {trade.exitPrice ? formatCurrency(trade.exitPrice) : 'Not exited'}
             </p>
           </div>
