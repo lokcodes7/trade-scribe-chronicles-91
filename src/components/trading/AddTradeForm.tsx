@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -31,14 +31,38 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
   const [targetPrice, setTargetPrice] = useState('');
   const [exitPrice, setExitPrice] = useState('');
   const [strategy, setStrategy] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
   const [trailedSL, setTrailedSL] = useState(false);
   const [slHit, setSlHit] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { addTrade } = useTrade();
   const { toast } = useToast();
+  
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type.match('image.*')) {
+        setImageFile(file);
+        
+        // Create a preview URL for the image
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setImagePreview(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        toast({
+          title: "Invalid file type",
+          description: "Please select an image file",
+          variant: "destructive",
+        });
+      }
+    }
+  };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +78,14 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
     
     setIsSubmitting(true);
     
+    let imageUrl = undefined;
+    
+    // In a real app, we would upload the image to a server and get a URL
+    // For now, we'll just use the file name as a placeholder
+    if (imageFile) {
+      imageUrl = `local://${imageFile.name}`;
+    }
+    
     const newTrade: Omit<Trade, 'id' | 'userId' | 'createdAt' | 'updatedAt'> = {
       date: new Date(date),
       stockName,
@@ -65,7 +97,7 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
       trailedSL,
       slHit,
       strategy,
-      imageUrl: imageUrl || undefined,
+      imageUrl,
       notes: notes || undefined,
     };
     
@@ -96,7 +128,8 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
     setTargetPrice('');
     setExitPrice('');
     setStrategy('');
-    setImageUrl('');
+    setImageFile(null);
+    setImagePreview(null);
     setNotes('');
     setTrailedSL(false);
     setSlHit(false);
@@ -127,7 +160,10 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
       <DialogContent className="sm:max-w-[600px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add New Trade</DialogTitle>
+            <DialogTitle>
+              <span className="text-red-600">Per</span>
+              <span className="text-green-600">fect</span> New Trade
+            </DialogTitle>
             <DialogDescription>
               Record your trade details for {date.toLocaleDateString()}
             </DialogDescription>
@@ -201,18 +237,18 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
             </div>
             
             {metrics && (
-              <div className="grid grid-cols-3 gap-4 bg-muted p-2 rounded-md">
+              <div className="grid grid-cols-3 gap-4 bg-orange-100 p-2 rounded-md">
                 <div>
-                  <Label className="text-xs text-muted-foreground">SL Amount</Label>
-                  <p className="text-sm font-medium">${metrics.slAmount.toFixed(2)}</p>
+                  <Label className="text-xs text-cream-100">SL Amount</Label>
+                  <p className="text-sm font-medium text-cream-100">${metrics.slAmount.toFixed(2)}</p>
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">Reward Amount</Label>
-                  <p className="text-sm font-medium">${metrics.rewardAmount.toFixed(2)}</p>
+                  <Label className="text-xs text-cream-100">Reward Amount</Label>
+                  <p className="text-sm font-medium text-cream-100">${metrics.rewardAmount.toFixed(2)}</p>
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">Risk:Reward</Label>
-                  <p className="text-sm font-medium">1:{metrics.riskReward.toFixed(2)}</p>
+                  <Label className="text-xs text-cream-100">Risk:Reward</Label>
+                  <p className="text-sm font-medium text-cream-100">1:{metrics.riskReward.toFixed(2)}</p>
                 </div>
               </div>
             )}
@@ -249,7 +285,7 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
                     onCheckedChange={setTrailedSL}
                     disabled={slHit}
                   />
-                  <Label htmlFor="trailedSL">Trailed Stop Loss</Label>
+                  <Label htmlFor="trailedSL" className="text-cream-100">Trailed Stop Loss</Label>
                 </div>
                 
                 <div className="flex items-center space-x-2">
@@ -262,19 +298,42 @@ const AddTradeForm: React.FC<AddTradeFormProps> = ({ date, open, onClose }) => {
                     }}
                     disabled={trailedSL}
                   />
-                  <Label htmlFor="slHit">Stop Loss Hit</Label>
+                  <Label htmlFor="slHit" className="text-cream-100">Stop Loss Hit</Label>
                 </div>
               </div>
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">Chart Image URL (optional)</Label>
-              <Input
-                id="imageUrl"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://example.com/chart.jpg"
-              />
+              <Label htmlFor="imageFile">Chart Image (optional)</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  ref={fileInputRef}
+                  id="imageFile"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Select Image
+                </Button>
+                <span className="text-sm text-cream-100">
+                  {imageFile ? imageFile.name : "No file selected"}
+                </span>
+              </div>
+              {imagePreview && (
+                <div className="mt-2">
+                  <img 
+                    src={imagePreview} 
+                    alt="Chart Preview" 
+                    className="max-h-40 rounded border border-border" 
+                  />
+                </div>
+              )}
             </div>
             
             <div className="space-y-2">

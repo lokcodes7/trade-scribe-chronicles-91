@@ -69,6 +69,14 @@ export default {
 					accent: '#0EA5E9',
 					light: '#F0F9FF',
 					dark: '#0F172A',
+				},
+				orange: {
+					50: '#FFEDD5',
+					100: '#FED7AA',
+					200: '#FDBA74',
+				},
+				cream: {
+					100: '#FDE1D3',
 				}
 			},
 			borderRadius: {
@@ -121,7 +129,7 @@ export default {
 				'fade-out-up': 'fade-out-up 0.3s ease-out'
 			},
 			backgroundImage: {
-				'trader-pattern': "url('/images/trading-background.jpg')",
+				'trader-pattern': "url('/images/trader-silhouette.png')",
 			}
 		}
 	},
